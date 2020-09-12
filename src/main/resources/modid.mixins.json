@@ -1,11 +1,14 @@
 {
   "required": true,
-  "package": "net.fabricmc.example.mixin",
+  "package": "org.valkyrienskies.loader.fabric.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinEntity",
+    "MixinRenderLayer",
+    "MixinWorldRenderer"
   ],
   "client": [
-    "ExampleMixin"
+    "MixinGameRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

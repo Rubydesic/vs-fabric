@@ -19,12 +19,13 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleModKt::init"
+      "org.valkyrienskies.loader.fabric.ValkyrienSkiesFabricKt::init"
     ]
   },
   "mixins": [
     "modid.mixins.json"
   ],
+  "accessWidener" : "vs-fabric.accesswidener",
   "depends": {
     "fabricloader": ">=0.8.7",
     "fabric": "*",

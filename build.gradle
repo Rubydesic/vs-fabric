@@ -1,4 +1,5 @@
 plugins {
+    id 'idea'
     id 'fabric-loom'
     id 'maven-publish'
     id "org.jetbrains.kotlin.jvm"
@@ -11,7 +12,14 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
+idea {
+    module {
+        downloadSources = true
+    }
+}
+
 minecraft {
+    accessWidener "src/main/resources/vs-fabric.accesswidener"
 }
 
 
@@ -30,8 +38,17 @@ dependencies {
 
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
+    // include vs-core via gradle's dependency substitution
+    api("org.valkyrienskies.core:vs-core:1.0")
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
+
+    compile("com.googlecode.cqengine:cqengine:3.4.0") {
+        exclude module: "sqlite-jdbc" //11.1 MB
+        exclude module: "antlr4-runtime" //648.0 KB
+        exclude module: "javassist" //1.5 MB
+        //exclude module: "typetools" //23.5 KB
+    }
 }
 
 processResources {
