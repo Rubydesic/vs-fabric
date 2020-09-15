@@ -25,8 +25,4 @@ class PhysicsObject(
         PhysObjectRenderManager(this, /*BlockPos(chunks.x * 16, 0, chunks.z * 16)*/ BlockPos(0, 0, 0))
     } else { null }
 
-    init {
-        transform.rotateXYZ(45.0, 0.0, 0.0)
-    }
-
 }

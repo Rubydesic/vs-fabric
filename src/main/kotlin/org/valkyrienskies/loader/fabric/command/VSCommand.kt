@@ -26,9 +26,9 @@ object VSCommand {
 
                             player.sendMessage(LiteralText("You are in $chunkX, $chunkZ"), false)
 
-                            val cWorld = MinecraftClient.getInstance().world!!;
+                            val cWorld = MinecraftClient.getInstance().world!!
 
-                            val physo = PhysicsObject(cWorld, ChunkClaim(chunkX, chunkZ, 0), Matrix4d().translation(0.0, 100.0, 0.0))
+                            val physo = PhysicsObject(cWorld, ChunkClaim(chunkX, chunkZ, 0), Matrix4d().rotateXYZ(45.0, 0.0, 0.0))
                             cWorld.ships.add(physo)
 
                             1

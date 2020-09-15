@@ -2,6 +2,7 @@ package org.valkyrienskies.client.render;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -13,6 +14,8 @@ import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.lwjgl.opengl.GL11;
 import org.valkyrienskies.loader.fabric.PhysicsObject;
+import org.valkyrienskies.loader.fabric.client.render.GarbageBlockModelRenderer;
+import org.valkyrienskies.loader.fabric.client.render.PhysRenderChunk;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,23 +46,25 @@ public class PhysObjectRenderManager {
             });
     }
 
-    public void renderBlockLayer(RenderLayer layerToRender, double partialTicks, MatrixStack stack, VertexConsumer consumer) {
+    public void renderBlockLayer(RenderLayer layerToRender, double partialTicks, MatrixStack stack) {
         GL11.glPushMatrix();
 
-        // applyRenderTransform(partialTicks, false);
+//        applyRenderTransform(partialTicks, false);
+        layerToRender.startDrawing();
         for (PhysRenderChunk renderChunk : renderChunks.values()) {
-            renderChunk.renderBlockLayer(layerToRender, stack, consumer);
+            renderChunk.renderBlockLayer(layerToRender, stack);
         }
+        layerToRender.endDrawing();
 
         GL11.glPopMatrix();
     }
 
     public void killRenderers() {
-        if (renderChunks != null) {
-            for (PhysRenderChunk renderChunk : renderChunks.values()) {
-                renderChunk.killRenderChunk();
-            }
-        }
+//        if (renderChunks != null) {
+//            for (OldPhysRenderChunk renderChunk : renderChunks.values()) {
+//                renderChunk.killRenderChunk();
+//            }
+//        }
     }
 
 //    public void updateRange(int minX, int minY, int minZ, int maxX, int maxY, int maxZ,
@@ -97,42 +102,48 @@ public class PhysObjectRenderManager {
 //    }
 
     public void applyRenderTransform(double partialTicks, boolean inverse) {
+        Matrix4d renderTransform = parent.getRenderTransform();
+        Vector3d translation = renderTransform.getTranslation(new Vector3d());
+        GL11.glTranslated(translation.x, translation.y, translation.z);
 
-        Vector3d centerOfRotation = new Vector3d();
+        AxisAngle4d rotation = new AxisAngle4d().set(renderTransform);
+        GL11.glRotated(rotation.angle, rotation.x, rotation.y, rotation.z);
 
-        Entity player = MinecraftClient.getInstance().player;
-
-        double p0 = player.lastRenderX
-            + (player.getPos().x - player.lastRenderX)
-            * partialTicks;
-        double p1 = player.lastRenderY
-            + (player.getPos().y -player.lastRenderY)
-            * partialTicks;
-        double p2 = player.lastRenderZ
-            + (player.getPos().z - player.lastRenderZ)
-            * partialTicks;
-
-        Matrix4d renderTransform = parent.getTransform();
-        Vector3d renderPos = renderTransform.getTranslation(new Vector3d());
-
-        // Offset pos is used to prevent floating point errors when rendering stuff thats very far away.
-        double offsetX = offsetPos.getX() - centerOfRotation.x();
-        double offsetY = offsetPos.getY() - centerOfRotation.y();
-        double offsetZ = offsetPos.getZ() - centerOfRotation.z();
-
-        if (inverse) {
-            AxisAngle4d rotation = new AxisAngle4d().set(parent.getGlobalToSubspace());
-
-            GL11.glTranslated(-offsetX, -offsetY, -offsetZ);
-            GL11.glRotated(Math.toDegrees(rotation.angle), rotation.x, rotation.y, rotation.z);
-            GL11.glTranslated(p0 - renderPos.x, p1 - renderPos.y, p2 - renderPos.z);
-        } else {
-            AxisAngle4d rotation = new AxisAngle4d().set(parent.getSubspaceToGlobal());
-
-            GL11.glTranslated(-p0 + renderPos.x, -p1 + renderPos.y, -p2 + renderPos.z);
-            GL11.glRotated(Math.toDegrees(rotation.angle), rotation.x, rotation.y, rotation.z);
-            GL11.glTranslated(offsetX, offsetY, offsetZ);
-        }
+//        Vector3d centerOfRotation = new Vector3d(parent.getChunks().getX() * 16, 60, parent.getChunks().getZ() * 16);
+//
+//        Entity player = MinecraftClient.getInstance().player;
+//
+//        double p0 = player.lastRenderX
+//            + (player.getPos().x - player.lastRenderX)
+//            * partialTicks;
+//        double p1 = player.lastRenderY
+//            + (player.getPos().y -player.lastRenderY)
+//            * partialTicks;
+//        double p2 = player.lastRenderZ
+//            + (player.getPos().z - player.lastRenderZ)
+//            * partialTicks;
+//
+//        Matrix4d renderTransform = parent.getTransform();
+//        Vector3d renderPos = renderTransform.getTranslation(new Vector3d());
+//
+//        // Offset pos is used to prevent floating point errors when rendering stuff thats very far away.
+//        double offsetX = offsetPos.getX() - centerOfRotation.x();
+//        double offsetY = offsetPos.getY() - centerOfRotation.y();
+//        double offsetZ = offsetPos.getZ() - centerOfRotation.z();
+//
+//        if (inverse) {
+//            AxisAngle4d rotation = new AxisAngle4d().set(parent.getGlobalToSubspace());
+//
+//            GL11.glTranslated(-offsetX, -offsetY, -offsetZ);
+//            GL11.glRotated(Math.toDegrees(rotation.angle), rotation.x, rotation.y, rotation.z);
+//            GL11.glTranslated(p0 - renderPos.x, p1 - renderPos.y, p2 - renderPos.z);
+//        } else {
+//            AxisAngle4d rotation = new AxisAngle4d().set(parent.getSubspaceToGlobal());
+//
+//            GL11.glTranslated(-p0 + renderPos.x, -p1 + renderPos.y, -p2 + renderPos.z);
+//            GL11.glRotated(Math.toDegrees(rotation.angle), rotation.x, rotation.y, rotation.z);
+//            GL11.glTranslated(offsetX, offsetY, offsetZ);
+//        }
     }
 
 //    /**

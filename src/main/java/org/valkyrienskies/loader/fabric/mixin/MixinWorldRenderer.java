@@ -3,15 +3,15 @@ package org.valkyrienskies.loader.fabric.mixin;
 import it.unimi.dsi.fastutil.objects.ObjectListIterator;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.VertexBuffer;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.chunk.ChunkBuilder;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Quaternion;
 import org.lwjgl.opengl.GL11;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -42,6 +42,8 @@ public class MixinWorldRenderer {
 //        }
 //    }
 
+    @Shadow @Final private BufferBuilderStorage bufferBuilders;
+
     @Inject(
         method = "renderLayer",
         at = @At(value = "HEAD")
@@ -56,14 +58,11 @@ public class MixinWorldRenderer {
             .filter(Objects::nonNull)
             .forEach(physicsObject -> {
                 GL11.glPushMatrix();
-                GL11.glScaled(10, 10, 10);
-
                 if (physicsObject.getRenderer() == null) {
                     GL11.glPopMatrix();
                     return;
                 } else {
-                    physicsObject.getRenderer().renderBlockLayer(renderLayer, 1, matrixStack, Tessellator.getInstance().getBuffer());
-                    Tessellator.getInstance().draw();
+                    physicsObject.getRenderer().renderBlockLayer(renderLayer, 1.0, matrixStack);
                 }
                 GL11.glPopMatrix();
             });

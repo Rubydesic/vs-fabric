@@ -21,7 +21,7 @@ object GarbageBlockModelRenderer : BlockModelRenderer {
         )
     }
 
-    private fun drawBoundingBox(
+    public fun drawBoundingBox(
         buffer: BufferBuilder,
         minX: Double,
         minY: Double,
