@@ -7,8 +7,7 @@ import net.minecraft.server.command.CommandManager
 import net.minecraft.text.LiteralText
 import org.joml.Matrix4d
 import org.valkyrienskies.core.game.ChunkClaim
-import org.valkyrienskies.loader.fabric.PhysicsObject
-import org.valkyrienskies.loader.fabric.shipData
+import org.valkyrienskies.loader.fabric.TransformableChunks
 import org.valkyrienskies.loader.fabric.ships
 
 object VSCommand {
@@ -28,7 +27,8 @@ object VSCommand {
 
                             val cWorld = MinecraftClient.getInstance().world!!
 
-                            val physo = PhysicsObject(cWorld, ChunkClaim(chunkX, chunkZ, 0), Matrix4d().rotateXYZ(45.0, 0.0, 0.0))
+                            val physo = TransformableChunks(cWorld, ChunkClaim(chunkX, chunkZ, 0),
+                                Matrix4d().translate(80.0, 10.0, 0.0))
                             cWorld.ships.add(physo)
 
                             1

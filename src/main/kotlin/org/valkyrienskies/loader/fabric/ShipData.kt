@@ -18,7 +18,7 @@ class ShipData(
     name: String?,
     var physicsEnabled: Boolean,
     @Transient var owner: QueryableShipData? = null,
-    @Transient var physo: PhysicsObject? = null
+    @Transient var physo: TransformableChunks? = null
 ) {
 
     var name = name

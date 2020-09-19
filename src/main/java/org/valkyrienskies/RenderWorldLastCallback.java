@@ -1,4 +1,4 @@
-package org.valkyrienskies.loader.fabric.event;
+package org.valkyrienskies;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
